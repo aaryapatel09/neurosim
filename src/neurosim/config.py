@@ -140,6 +140,34 @@ class FluidConfig(BaseModel):
     boundary: Literal["periodic", "no_slip", "free_slip"] = "periodic"
 
 
+class RelativityConfig(BaseModel):
+    """Configuration for general relativity simulations.
+
+    Attributes:
+        M: Central mass in geometric units (G=c=1). Schwarzschild radius = 2M.
+        a: Spin parameter for Kerr metric (0 <= a < M).
+        metric: Spacetime metric to use.
+    """
+
+    M: float = Field(1.0, gt=0.0)
+    a: float = Field(0.0, ge=0.0)
+    metric: Literal["schwarzschild", "kerr"] = "schwarzschild"
+
+
+class WaveConfig(BaseModel):
+    """Configuration for wave equation simulations.
+
+    Attributes:
+        speed: Default wave speed (m/s or lattice units).
+        boundary: Boundary condition type.
+        damping: Damping coefficient at absorbing boundaries.
+    """
+
+    speed: float = Field(1.0, gt=0.0)
+    boundary: Literal["absorbing", "periodic", "reflecting"] = "absorbing"
+    damping: float = Field(0.0, ge=0.0)
+
+
 class IsingConfig(BaseModel):
     """Configuration for Ising model simulations.
 

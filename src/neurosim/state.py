@@ -319,6 +319,125 @@ class EMFieldHistory3D:
 
 
 @dataclass(frozen=True)
+class GeodesicTrajectory:
+    """Trajectory of a particle or photon in curved spacetime.
+
+    Attributes:
+        tau: Proper time (or affine parameter for photons), shape (n_steps,).
+        coords: Spacetime coordinates [t, r, theta, phi], shape (n_steps, 4).
+        momenta: Covariant momenta [p_t, p_r, p_theta, p_phi], shape (n_steps, 4).
+        metric_name: Name of the spacetime metric used.
+    """
+
+    tau: Array
+    coords: Array
+    momenta: Array
+    metric_name: str = "schwarzschild"
+
+    @property
+    def n_steps(self) -> int:
+        """Number of integration steps."""
+        return int(self.tau.shape[0])
+
+    @property
+    def r(self) -> Array:
+        """Radial coordinate r(tau)."""
+        return self.coords[:, 1]
+
+    @property
+    def phi(self) -> Array:
+        """Azimuthal coordinate phi(tau)."""
+        return self.coords[:, 3]
+
+    @property
+    def x(self) -> Array:
+        """Cartesian x = r * sin(theta) * cos(phi)."""
+        return (
+            self.coords[:, 1] * jnp.sin(self.coords[:, 2]) * jnp.cos(self.coords[:, 3])
+        )
+
+    @property
+    def y(self) -> Array:
+        """Cartesian y = r * sin(theta) * sin(phi)."""
+        return (
+            self.coords[:, 1] * jnp.sin(self.coords[:, 2]) * jnp.sin(self.coords[:, 3])
+        )
+
+
+@dataclass(frozen=True)
+class CircuitState:
+    """State of a quantum circuit simulation.
+
+    Attributes:
+        state_vector: Complex state vector, shape (2**n_qubits,).
+        n_qubits: Number of qubits.
+        measurement_probs: Measurement probabilities, shape (2**n_qubits,), or None.
+    """
+
+    state_vector: Array
+    n_qubits: int
+    measurement_probs: Array | None = None
+
+    @property
+    def probabilities(self) -> Array:
+        """Measurement probabilities |<i|psi>|^2."""
+        return jnp.abs(self.state_vector) ** 2
+
+
+@dataclass(frozen=True)
+class CircuitResult:
+    """Result of a parameterized quantum circuit evaluation.
+
+    Attributes:
+        state_vector: Final state vector, shape (2**n_qubits,).
+        n_qubits: Number of qubits.
+        expectation: Expectation value of the measured observable, or None.
+        parameters: Circuit parameters used, shape (n_params,), or None.
+        energy_history: Energy values during optimization, or None.
+    """
+
+    state_vector: Array
+    n_qubits: int
+    expectation: float | None = None
+    parameters: Array | None = None
+    energy_history: Array | None = None
+
+    @property
+    def probabilities(self) -> Array:
+        """Measurement probabilities."""
+        return jnp.abs(self.state_vector) ** 2
+
+
+@dataclass(frozen=True)
+class WaveResult:
+    """Result of a wave equation simulation.
+
+    Attributes:
+        t: Time values, shape (n_snapshots,).
+        u: Displacement field snapshots, shape (n_snapshots, nx, ny).
+        grid_x: Spatial x-coordinates, shape (nx,).
+        grid_y: Spatial y-coordinates, shape (ny,).
+        speed_field: Wave speed field, shape (nx, ny), or None.
+    """
+
+    t: Array
+    u: Array
+    grid_x: Array
+    grid_y: Array
+    speed_field: Array | None = None
+
+    @property
+    def n_snapshots(self) -> int:
+        """Number of saved snapshots."""
+        return int(self.t.shape[0])
+
+    @property
+    def amplitude(self) -> Array:
+        """Peak amplitude at each snapshot."""
+        return jnp.max(jnp.abs(self.u), axis=(1, 2))
+
+
+@dataclass(frozen=True)
 class IsingResult:
     """Result of an Ising model Monte Carlo simulation.
 

@@ -26,6 +26,23 @@ jax.config.update("jax_enable_x64", True)  # type: ignore[no-untyped-call]
 __version__ = "0.1.0"
 
 # Core configuration
+from neurosim.circuits.gates import (
+    CNOT,
+    CZ,
+    H,
+    Rx,
+    Ry,
+    Rz,
+    S,
+    T,
+    X,
+    Y,
+    Z,
+    phase,
+)
+
+# Quantum circuits
+from neurosim.circuits.simulator import QuantumCircuit
 from neurosim.classical.hamiltonian import HamiltonianSystem
 from neurosim.classical.integrators import (
     euler,
@@ -48,7 +65,9 @@ from neurosim.config import (
     NBodyConfig,
     Params,
     QuantumConfig,
+    RelativityConfig,
     SimulationConfig,
+    WaveConfig,
 )
 from neurosim.em.charges import ChargeSystem, PointCharge
 
@@ -102,13 +121,26 @@ from neurosim.quantum.schrodinger import (
 from neurosim.quantum.spin import SpinChain
 from neurosim.quantum.stationary import solve_eigenvalue_problem
 
+# Relativity
+from neurosim.relativity.geodesic import GeodesicSolver
+from neurosim.relativity.lensing import GravitationalLens
+from neurosim.relativity.lorentz import (
+    lorentz_boost,
+    lorentz_factor,
+    proper_time,
+    velocity_addition,
+)
+
 # State representations
 from neurosim.state import (
+    CircuitResult,
+    CircuitState,
     EMFieldHistory,
     EMFieldHistory3D,
     EMFieldState,
     FluidHistory,
     FluidState,
+    GeodesicTrajectory,
     IsingResult,
     NBodyState,
     NBodyTrajectory,
@@ -116,6 +148,7 @@ from neurosim.state import (
     QuantumResult,
     QuantumState,
     Trajectory,
+    WaveResult,
 )
 from neurosim.statmech.boltzmann import (
     boltzmann_distribution,
@@ -128,6 +161,9 @@ from neurosim.statmech.ising import (
     sweep_temperatures,
     vmap_temperatures,
 )
+
+# Waves / acoustics
+from neurosim.waves.acoustic import AcousticSolver, GaussianPulse, PointSource
 
 # Visualization (lazy import — only loaded if matplotlib available)
 try:
@@ -156,6 +192,8 @@ __all__ = [
     "EMConfig",
     "FluidConfig",
     "QuantumConfig",
+    "RelativityConfig",
+    "WaveConfig",
     "IsingConfig",
     # State
     "PhaseState",
@@ -167,6 +205,10 @@ __all__ = [
     "EMFieldHistory3D",
     "FluidState",
     "FluidHistory",
+    "GeodesicTrajectory",
+    "CircuitState",
+    "CircuitResult",
+    "WaveResult",
     "QuantumState",
     "QuantumResult",
     "IsingResult",
@@ -231,6 +273,31 @@ __all__ = [
     "single_slit",
     "double_slit",
     "circular_aperture",
+    # Relativity
+    "GeodesicSolver",
+    "GravitationalLens",
+    "lorentz_boost",
+    "lorentz_factor",
+    "proper_time",
+    "velocity_addition",
+    # Quantum Circuits
+    "QuantumCircuit",
+    "H",
+    "X",
+    "Y",
+    "Z",
+    "S",
+    "T",
+    "Rx",
+    "Ry",
+    "Rz",
+    "phase",
+    "CNOT",
+    "CZ",
+    # Waves
+    "AcousticSolver",
+    "PointSource",
+    "GaussianPulse",
     # Optimization
     "optimize",
     "projectile",
